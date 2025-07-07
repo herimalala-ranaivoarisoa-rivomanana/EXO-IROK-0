@@ -10,11 +10,11 @@ function App() {
   const [longUrl, setLongUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
   const [originalUrl, setOriginalUrl] = useState('');
-  const [urls, setUrls] = useState([]); 
+  const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  
+
   React.useEffect(() => {
     fetch(process.env.REACT_APP_API_URL)
       .then(res => {
@@ -22,7 +22,7 @@ function App() {
         return res.json();
       })
       .then(data => {
-        
+
         setUrls(Array.isArray(data) ? data : []);
       })
       .catch(err => {
@@ -30,7 +30,7 @@ function App() {
       });
   }, []);
 
-  
+
 
 
   /**
@@ -38,14 +38,14 @@ function App() {
  * Performs optimistic UI update and error handling.
  * @param {React.FormEvent<HTMLFormElement>} e - The form event
  */
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setShortUrl('');
     setOriginalUrl('');
 
-    
+
     const tempShortCode = 'temp-' + Date.now();
     const optimisticUrl = {
       shortUrl: 'En attente...',
@@ -67,17 +67,18 @@ const handleSubmit = async (e) => {
       const data = await res.json();
       setShortUrl(data.shortUrl);
       setOriginalUrl(data.originalUrl);
-      
+
       setUrls(prev => {
-        
+
         return [
           { shortUrl: data.shortUrl, shortCode: data.shortCode, originalUrl: data.originalUrl },
           ...prev.filter(url => url.shortCode !== tempShortCode)
         ];
       });
+      setLongUrl('');
     } catch (err) {
       setError(err.message);
-      
+
       setUrls(prev => prev.filter(url => url.shortCode !== tempShortCode));
     } finally {
       setLoading(false);
@@ -106,8 +107,8 @@ const handleSubmit = async (e) => {
         {shortUrl && (
           <div style={{ marginTop: 24 }}>
             <strong>Votre URL raccourcie :</strong>
-            <div>
-              <a href={originalUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
+            <div >
+              <a  style={{ color: 'white' }} href={originalUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
             </div>
           </div>
         )}
@@ -122,7 +123,7 @@ const handleSubmit = async (e) => {
               <li key={item.shortCode}>
                 <a href={item.originalUrl} target="_blank" rel="noopener noreferrer">{item.shortUrl}</a>
               </li>
-            ))} 
+            ))}
           </ul>
         )}
       </div>
