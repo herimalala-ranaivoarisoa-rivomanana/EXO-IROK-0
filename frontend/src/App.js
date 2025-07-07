@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 
+/**
+ * Main React component for the URL shortener frontend.
+ * Handles URL input, submission, optimistic updates, and displays history.
+ * @returns {JSX.Element} The rendered App component
+ */
 function App() {
   const [longUrl, setLongUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
@@ -9,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Charger la liste des URLs depuis le backend au chargement du composant
+  
   React.useEffect(() => {
     fetch(process.env.REACT_APP_API_URL)
       .then(res => {
@@ -17,7 +22,7 @@ function App() {
         return res.json();
       })
       .then(data => {
-        // On suppose que le backend retourne un tableau d’objets { shortUrl, shortCode, originalUrl }
+        
         setUrls(Array.isArray(data) ? data : []);
       })
       .catch(err => {
@@ -25,17 +30,22 @@ function App() {
       });
   }, []);
 
-  // Log l'évolution du tableau urls à chaque modification (debug)
+  
 
 
-  const handleSubmit = async (e) => {
+  /**
+ * Handles form submission for creating a shortened URL.
+ * Performs optimistic UI update and error handling.
+ * @param {React.FormEvent<HTMLFormElement>} e - The form event
+ */
+const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setShortUrl('');
     setOriginalUrl('');
 
-    // Création d’un shortCode temporaire pour l’optimistic update
+    
     const tempShortCode = 'temp-' + Date.now();
     const optimisticUrl = {
       shortUrl: 'En attente...',
@@ -57,9 +67,9 @@ function App() {
       const data = await res.json();
       setShortUrl(data.shortUrl);
       setOriginalUrl(data.originalUrl);
-      // Remplacer l’optimistic par la vraie valeur
+      
       setUrls(prev => {
-        // Retirer le temporaire et ajouter la vraie réponse en tête
+        
         return [
           { shortUrl: data.shortUrl, shortCode: data.shortCode, originalUrl: data.originalUrl },
           ...prev.filter(url => url.shortCode !== tempShortCode)
@@ -67,7 +77,7 @@ function App() {
       });
     } catch (err) {
       setError(err.message);
-      // Retirer l’optimistic en cas d’erreur
+      
       setUrls(prev => prev.filter(url => url.shortCode !== tempShortCode));
     } finally {
       setLoading(false);
