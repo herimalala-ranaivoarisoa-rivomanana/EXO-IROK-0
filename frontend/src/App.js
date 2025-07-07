@@ -128,7 +128,7 @@ function App() {
                   const res = await fetch(`http://localhost:3001/api/url/${shortUrl.split('/').pop()}`);
                   if (!res.ok) throw new Error('Short URL not found');
                   const data = await res.json();
-                  window.location.href = data.originalUrl;
+                  window.open(data.originalUrl, '_blank');
                 } catch (err) {
                   alert(err.message);
                 }
@@ -163,7 +163,7 @@ function App() {
                               const res = await fetch(`http://localhost:3001/api/url/${item.shortCode}`);
                               if (!res.ok) throw new Error('Short URL not found');
                               const data = await res.json();
-                              window.location.href = data.originalUrl;
+                              window.open(data.originalUrl, '_blank');
                             } catch (err) {
                               alert(err.message);
                             }
