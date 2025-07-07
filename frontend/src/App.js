@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import './App.css';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+
 
 /**
  * Main React component for the URL shortener frontend.
@@ -87,47 +97,79 @@ function App() {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Réducteur d'URL</h1>
-        <form onSubmit={handleSubmit} style={{ maxWidth: 400, width: '100%' }}>
-          <input
+    <Container maxWidth="sm" sx={{ mt: 6 }}>
+      <Box sx={{ bgcolor: 'background.paper', p: 4, borderRadius: 2, boxShadow: 2 }}>
+        <Typography variant="h4" component="h1" align="center" gutterBottom>
+          URL Shortener
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
             type="url"
-            placeholder="Collez votre URL longue ici..."
+            label="Paste your long URL here..."
             value={longUrl}
             onChange={e => setLongUrl(e.target.value)}
             required
-            style={{ padding: 8, width: '100%', marginBottom: 12, borderRadius: 4, border: '1px solid #ccc' }}
+            variant="outlined"
+            fullWidth
           />
-          <button type="submit" disabled={loading} style={{ padding: '8px 24px', borderRadius: 4, border: 'none', background: '#007bff', color: 'white', fontWeight: 'bold' }}>
-            {loading ? 'Raccourcissement...' : 'Raccourcir'}
-          </button>
-        </form>
-        {error && <div style={{ color: 'red', marginTop: 12 }}>{error}</div>}
+          <Button type="submit" variant="contained" color="primary" disabled={loading} size="large">
+            {loading ? 'Shortening...' : 'Shorten'}
+          </Button>
+        </Box>
+        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
         {shortUrl && (
-          <div style={{ marginTop: 24 }}>
-            <strong>Votre URL raccourcie :</strong>
-            <div >
-              <a  style={{ color: 'white' }} href={originalUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
-            </div>
-          </div>
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="subtitle1" gutterBottom>
+              Your shortened URL:
+            </Typography>
+            <Button
+              href={originalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              color="secondary"
+              sx={{ fontWeight: 'bold', fontSize: 18 }}
+            >
+              {shortUrl}
+            </Button>
+          </Box>
         )}
-      </header>
-      <div style={{ marginTop: 40 }}>
-        <strong>Historique de vos URLs raccourcies :</strong>
+      </Box>
+      <Box sx={{ mt: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h6" gutterBottom>
+          Your shortened URLs history:
+        </Typography>
         {urls.length === 0 ? (
-          <div>Aucun lien raccourci pour l'instant.</div>
+          <Typography color="text.secondary">No shortened links yet.</Typography>
         ) : (
-          <ul>
-            {urls.map((item) => (
-              <li key={item.shortCode}>
-                <a href={item.originalUrl} target="_blank" rel="noopener noreferrer">{item.shortUrl}</a>
-              </li>
-            ))}
-          </ul>
+          <Box sx={{ width: '100%', maxWidth: 400 }}>
+            <List>
+              {urls.map((item, idx) => (
+                <React.Fragment key={item.shortCode}>
+                  <ListItem sx={{ justifyContent: 'center' }}>
+                    <ListItemText
+                      sx={{ display: 'flex', justifyContent: 'center' }}
+                      primary={
+                        <Button
+                          href={item.originalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="text"
+                          sx={{ color: 'primary.main', textTransform: 'none', fontWeight: 'bold' }}
+                        >
+                          {item.shortUrl}
+                        </Button>
+                      }
+                    />
+                  </ListItem>
+                  {idx < urls.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
+            </List>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 }
 
