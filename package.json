@@ -1,0 +1,12 @@
+{
+  "name": "exo-irok-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "npm --prefix backend test -- --watchAll=false && npm --prefix frontend test -- --watchAll=false",
+    "test:all": "concurrently \"npm --prefix backend test -- --watchAll=false\" \"npm --prefix frontend test -- --watchAll=false\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
