@@ -14,6 +14,7 @@ afterEach(() => {
 describe('URL Shortener Frontend', () => {
   beforeAll(() => {
     window.alert = jest.fn();
+    window.open = jest.fn();
   });
   beforeEach(() => {
     process.env.REACT_APP_API_URL = '/api/url';
@@ -65,11 +66,6 @@ describe('URL Shortener Frontend', () => {
   });
 
   test('redirects to original URL when clicking short URL button', async () => {
-    // Add a short URL to state first
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ shortUrl: 'http://localhost:3001/api/url/abc123', shortCode: 'abc123', originalUrl: 'https://example.com' })
-    });
     render(<App />);
     const input = screen.getByLabelText(/paste your long url here/i);
     const button = screen.getByRole('button', { name: /shorten/i });
@@ -83,20 +79,13 @@ describe('URL Shortener Frontend', () => {
       ok: true,
       json: async () => ({ originalUrl: 'https://example.com' })
     });
-    // Mock window.location
-    delete window.location;
-    window.location = { href: '' };
     const shortUrlButton = screen.getByRole('button', { name: /http:\/\/localhost:3001\/api\/url\/abc123/i });
     expect(shortUrlButton).toBeInTheDocument();
     fireEvent.click(shortUrlButton);
-    await waitFor(() => expect(window.location.href).toBe('https://example.com'));
+    await waitFor(() => expect(window.open).toHaveBeenCalledWith('https://example.com', '_blank'));
   });
 
   test('shows error if backend returns error on short URL click', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ shortUrl: 'http://localhost:3001/api/url/abc123', shortCode: 'abc123', originalUrl: 'https://example.com' })
-    });
     render(<App />);
     const input = screen.getByLabelText(/paste your long url here/i);
     const button = screen.getByRole('button', { name: /shorten/i });
