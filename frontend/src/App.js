@@ -123,9 +123,16 @@ function App() {
               Your shortened URL:
             </Typography>
             <Button
-              href={originalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={async () => {
+                try {
+                  const res = await fetch(`http://localhost:3001/api/url/${shortUrl.split('/').pop()}`);
+                  if (!res.ok) throw new Error('Short URL not found');
+                  const data = await res.json();
+                  window.location.href = data.originalUrl;
+                } catch (err) {
+                  alert(err.message);
+                }
+              }}
               variant="contained"
               color="secondary"
               sx={{ fontWeight: 'bold', fontSize: 18 }}
@@ -151,9 +158,16 @@ function App() {
                       sx={{ display: 'flex', justifyContent: 'center' }}
                       primary={
                         <Button
-                          href={item.originalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={async () => {
+                            try {
+                              const res = await fetch(`http://localhost:3001/api/url/${item.shortCode}`);
+                              if (!res.ok) throw new Error('Short URL not found');
+                              const data = await res.json();
+                              window.location.href = data.originalUrl;
+                            } catch (err) {
+                              alert(err.message);
+                            }
+                          }}
                           variant="text"
                           sx={{ color: 'primary.main', textTransform: 'none', fontWeight: 'bold' }}
                         >
